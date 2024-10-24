@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
-import { FlatList, TextInput, TouchableOpacity, View, Text, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
-import { ThemedView } from '@/components/ThemedView';
-import { ThemedText } from '@/components/ThemedText';
+import { FlatList, View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { useRoute, RouteProp } from '@react-navigation/native';
+import { RootStackParamList } from '../AppNavigator';
+
+type ChatScreenRouteProp = RouteProp<RootStackParamList, 'ChatScreen'>;
 
 export default function ChatScreen() {
+  const route = useRoute<ChatScreenRouteProp>();
+  const { chatId } = route.params; // Accede al chatId
+
   const [messages, setMessages] = useState([
     { id: '1', text: '¡Hola! ¿Cómo estás?', sender: 'user' },
     { id: '2', text: 'Todo bien, ¿y tú?', sender: 'other' },
@@ -16,7 +21,7 @@ export default function ChatScreen() {
     const newMessageObject = {
       id: (messages.length + 1).toString(),
       text: newMessage,
-      sender: 'user', // Puedes hacer lógica para alternar entre 'user' y 'other'
+      sender: 'user',
     };
 
     setMessages((prevMessages) => [newMessageObject, ...prevMessages]);
@@ -25,12 +30,12 @@ export default function ChatScreen() {
 
   const renderMessage = ({ item }: { item: any }) => (
     <View style={[styles.messageContainer, item.sender === 'user' ? styles.userMessage : styles.otherMessage]}>
-      <ThemedText style={styles.messageText}>{item.text}</ThemedText>
+      <Text style={styles.messageText}>{item.text}</Text>
     </View>
   );
 
   return (
-    <ThemedView style={styles.container}>
+    <View style={styles.container}>
       <FlatList
         data={messages}
         renderItem={renderMessage}
@@ -40,23 +45,18 @@ export default function ChatScreen() {
         inverted
       />
 
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-        style={styles.inputContainer}
-      >
+      <View style={styles.inputContainer}>
         <TextInput
           value={newMessage}
           onChangeText={setNewMessage}
           style={styles.input}
           placeholder="Escribe un mensaje..."
-          placeholderTextColor="#999"
         />
         <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
           <Text style={styles.sendButtonText}>Enviar</Text>
         </TouchableOpacity>
-      </KeyboardAvoidingView>
-    </ThemedView>
+      </View>
+    </View>
   );
 }
 
@@ -74,26 +74,18 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginVertical: 8,
     maxWidth: '75%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
   },
   userMessage: {
     alignSelf: 'flex-end',
     backgroundColor: '#007AFF',
-    borderTopRightRadius: 0,
   },
   otherMessage: {
     alignSelf: 'flex-start',
     backgroundColor: '#00c8d1',
-    borderTopLeftRadius: 0,
   },
   messageText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontFamily: 'Arial',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -111,24 +103,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 10,
     fontSize: 16,
-    backgroundColor: '#FAFAFA',
   },
   sendButton: {
     backgroundColor: '#007AFF',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
     borderRadius: 25,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     marginLeft: 10,
-    justifyContent: 'center',
-    shadowColor: '#007AFF',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 2,
-    elevation: 5,
   },
   sendButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: '600',
   },
 });
