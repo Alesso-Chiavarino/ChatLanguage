@@ -1,20 +1,21 @@
+// AppNavigator.js
+
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import ChatsListScreen from '../src/screens/ChatsListScreen'; // I de lista de chats
-import ChatScreen from '../src/screens/ChatScreen'; // Importa la pantalla de detalles del chat
+import ChatListScreen from './screens/ChatsListScreen';
+import ChatScreen from '../(tabs)';
+// AppNavigator.js o el archivo de navegación principal
 
-export type RootStackParamList = {
-  ChatsList: undefined;
-  ChatScreen: { chatId: string }; // La pantalla ChatScreen recibe un chatId
-};
 
-const Stack = createStackNavigator<RootStackParamList>();
+
+const Stack = createStackNavigator();
 
 export default function AppNavigator() {
   return (
-    <Stack.Navigator initialRouteName="ChatsList"> {/* Asegúrate de que aquí esté "ChatsList" */}
-      <Stack.Screen name="ChatsList" component={ChatsListScreen} />
-      <Stack.Screen name="ChatScreen" component={ChatScreen} />
+    <Stack.Navigator initialRouteName="ChatListScreen">
+      <Stack.Screen name="ChatListScreen" component={ChatListScreen} options={{ title: 'Chats' }} />
+      <Stack.Screen name="ChatScreen" component={ChatScreen} options={({ route }: {route: any}) => ({ title: route.params.chatName })} />
     </Stack.Navigator>
   );
 }
+

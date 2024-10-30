@@ -1,13 +1,10 @@
+// ChatScreen.js
+
 import React, { useState } from 'react';
-import { FlatList, View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { useRoute, RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../AppNavigator';
+import { FlatList, TextInput, TouchableOpacity, View, Text, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 
-type ChatScreenRouteProp = RouteProp<RootStackParamList, 'ChatScreen'>;
-
-export default function ChatScreen() {
-  const route = useRoute<ChatScreenRouteProp>();
-  const { chatId } = route.params; // Accede al chatId
+export default function ChatScreen({ route }: { route: any }) {
+  const { chatId, chatName } = route.params;
 
   const [messages, setMessages] = useState([
     { id: '1', text: '¡Hola! ¿Cómo estás?', sender: 'user' },
@@ -36,6 +33,8 @@ export default function ChatScreen() {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.chatHeader}>{chatName}</Text>
+
       <FlatList
         data={messages}
         renderItem={renderMessage}
@@ -45,17 +44,22 @@ export default function ChatScreen() {
         inverted
       />
 
-      <View style={styles.inputContainer}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+        style={styles.inputContainer}
+      >
         <TextInput
           value={newMessage}
           onChangeText={setNewMessage}
           style={styles.input}
           placeholder="Escribe un mensaje..."
+          placeholderTextColor="#999"
         />
         <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
           <Text style={styles.sendButtonText}>Enviar</Text>
         </TouchableOpacity>
-      </View>
+      </KeyboardAvoidingView>
     </View>
   );
 }
@@ -64,6 +68,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F0F4F8',
+  },
+  chatHeader: {
+    padding: 16,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    backgroundColor: '#FFFFFF',
   },
   chat: {
     flex: 1,
@@ -103,12 +114,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 10,
     fontSize: 16,
+    backgroundColor: '#FAFAFA',
   },
   sendButton: {
     backgroundColor: '#007AFF',
-    borderRadius: 25,
-    paddingHorizontal: 20,
     paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 25,
     marginLeft: 10,
   },
   sendButtonText: {

@@ -1,68 +1,47 @@
-import React, { useState } from 'react';
-import { FlatList, TouchableOpacity, View, Text, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../AppNavigator';
+// ChatListScreen.js
 
-type NavigationProp = StackNavigationProp<RootStackParamList, 'ChatScreen'>; // Cambia esto a 'ChatScreen'
+import React from 'react';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 
-export default function ChatsListScreen() {
-  const [chats, setChats] = useState([
-    { id: '1', name: 'Juan Pérez', lastMessage: '¡Hola! ¿Cómo estás?', lastMessageTime: '10:30 AM' },
-    { id: '2', name: 'Carlos López', lastMessage: 'Nos vemos mañana', lastMessageTime: '9:00 AM' },
-    { id: '3', name: 'Grupo Amigos', lastMessage: 'Confirmado para las 7pm', lastMessageTime: 'Ayer' },
-  ]);
+export default function ChatListScreen({ navigation }: { navigation: any }) {
+  const chats = [
+    { id: '1', name: 'Fede Casani' },
+    { id: '2', name: 'Laura Suarez' },
+    { id: '3', name: 'Carlos Gomez' },
+    // Agrega más chats según necesites
+  ];
 
-  const navigation = useNavigation<NavigationProp>(); // Navegación
-
-  const openChat = (chatId: string) => {
-    navigation.navigate('ChatScreen', { chatId }); // Navegar a la pantalla de chat con el ID
-  };
-
-  const renderChat = ({ item }: { item: any }) => (
-    <TouchableOpacity style={styles.chatItem} onPress={() => openChat(item.id)}>
-      <View style={styles.chatInfo}>
-        <Text style={styles.chatName}>{item.name}</Text>
-        <Text style={styles.chatLastMessage}>{item.lastMessage}</Text>
-      </View>
-      <Text style={styles.chatTime}>{item.lastMessageTime}</Text>
+  const renderChatItem = ({ item }: { item: any }) => (
+    <TouchableOpacity
+      style={styles.chatItem}
+      onPress={() => navigation.navigate('ChatScreen', { chatId: item.id, chatName: item.name })}
+    >
+      <Text style={styles.chatName}>{item.name}</Text>
     </TouchableOpacity>
   );
 
   return (
-    <FlatList
-      data={chats}
-      renderItem={renderChat}
-      keyExtractor={(item) => item.id}
-      contentContainerStyle={{ paddingBottom: 20 }}
-    />
+    <View style={styles.container}>
+      <FlatList
+        data={chats}
+        renderItem={renderChatItem}
+        keyExtractor={(item) => item.id}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  chatItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-  },
-  chatInfo: {
+  container: {
     flex: 1,
+    backgroundColor: '#F0F4F8',
+  },
+  chatItem: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
   },
   chatName: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  chatLastMessage: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 2,
-  },
-  chatTime: {
-    fontSize: 12,
-    color: '#999',
   },
 });
